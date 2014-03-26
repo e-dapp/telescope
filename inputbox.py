@@ -32,21 +32,19 @@ def ask(surface, question):
     while 1:
         (inkey, unichr) = get_key()
 
-        if inkey == K_BACKSPACE:  # remove last char
+        if inkey == K_BACKSPACE:
             current_string = current_string[:-1]
         elif inkey == K_RETURN or inkey == K_KP_ENTER:
-            break   # break out of the while loop to return current_string
+            break
         elif inkey == pygame.K_ESCAPE:
             terminate()
         else:
-            current_string += unichr  # add a new char
-
-        # limit the name length to 12 characters 
-        current_string = current_string[:12]
-        # show the current name during typing
+            current_string += unichr
+ 
+        current_string = current_string[:50]
         display_box(surface, question + ": " + current_string)
 
-    return current_string # this is the answer    
+    return current_string    
 
 def main():
   screen = pygame.display.set_mode((320,240))
@@ -54,4 +52,5 @@ def main():
   pygame.quit()
   sys.exit()
 
-if __name__ == '__main__': main()
+if __name__ == '__main__':
+  main()
