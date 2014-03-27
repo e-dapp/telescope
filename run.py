@@ -41,8 +41,8 @@ def assign_target(d, r):
     port.write('!CStr' + r + ';')
 
 def alignment_side(direction):
-    port.write('!ASas' + direction + ';') 
-    
+    port.write('!ASas' + direction + ';')
+
 def align_from_target():
     port.write('!AFrn;')
 
@@ -51,7 +51,7 @@ def goto_target():
 
 def help_box():
     h_box_place = (screen.get_width() - 250, 10, 
-                      240, screen.get_height() - 52)
+                      240, 15 + len(help_list)*20)
     
     fontobject = pygame.font.SysFont("monospace", 14)
     pygame.draw.rect(screen, white,
@@ -98,7 +98,8 @@ time_tracker = 0
 help_list = ['o - Open Port', 'e - Set Alignment Side', 
              'r - Target Right Ascension', 'd - Target Declination', 
              's - Set Target From RA/DE', 'a - Align from Target', 
-             'g - GoTo Target']
+             'g - GoTo Target', 'test for more lines',
+             'fuck yeah', 'eat your heart out bitches']
 
 while good: 
     screen.fill(black)
