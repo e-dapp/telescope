@@ -37,7 +37,8 @@ def ask(surface, question):
         elif inkey == K_RETURN or inkey == K_KP_ENTER:
             break
         elif inkey == pygame.K_ESCAPE:
-            terminate()
+            current_string = ''
+            break
         else:
             current_string += unichr
  

@@ -74,14 +74,55 @@ def current_info_box():
     pygame.draw.rect(screen, white,
                              box_place,
                              1)
+    new_c_i = []
+    
+    screen.blit(fontobject.render('Current Information, [press u to update]',
+                                  1,(255,255,255)),
+                (box_place[0] + 10,
+                 box_place[1] + 5))    
+    
+    for i in range(len(current_info)):
+        x = manage_string(current_info[i])
+        new_c_i.append(x)
+    
+    for i in range(len(current_info_titles)):
+        screen.blit(fontobject.render(current_info_titles[i], 1,(255,255,255)),
+                    (box_place[0] + 10,
+                     box_place[1] + 40 + i*20))
+    
+    for i in range(len(current_info)):
+        screen.blit(fontobject.render(new_c_i[i], 1, (255,255,255)), 
+                    (box_place[0] + 300,
+                     box_place[1] + 40 + i*20))
 
-
-def get_align_side():
+def get_status():
+    port.readline()
+    port.write('!AGas;')
+    a = port.readline()
     port.write('!AGai;')
-
-def get_cur_dec():
+    b = port.readline()
+    port.write('!CGra;')
+    c = port.readline()
+    port.write('!CGde;')
+    d = port.readline()
+    port.write('!CGtr;')
+    e = port.readline()
     port.write('!CGtd;')
-    return port.readline()
+    f = port.readline()
+    
+    #return str(port.readline())
+    return [a, b, c, d, e, f]
+
+def manage_string(string):
+    new_string = ''
+    for i in string:
+        if i != ';':
+            new_string += i
+        else:
+            break
+    
+    return new_string
+
 
 pygame.init()
 size = (width, height) = (800,500)
@@ -98,22 +139,20 @@ time_tracker = 0
 help_list = ['o - Open Port', 'e - Set Alignment Side', 
              'r - Target Right Ascension', 'd - Target Declination', 
              's - Set Target From RA/DE', 'a - Align from Target', 
-             'g - GoTo Target', 'test for more lines',
-             'fuck yeah', 'eat your heart out bitches']
+             'g - GoTo Target', 'u - Update Current Info']
+
+current_info_titles = ['Alignment State:', 'Side of the Sky:',
+                       'Current Right Ascension:', 'Current Declination:',
+                       'Target Right Ascension:', 'Target Declination:']
+
+current_info = [';']
 
 while good: 
     screen.fill(black)
     
-    #----------Tentative, Time Sensitive--------------------
-    
-    time_tracker += clock.tick()
-    
-    if time_tracker > status_delay:
-        
-        time_tracker = 0
-    
     help_box()
     current_info_box()
+    
     
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
@@ -137,6 +176,8 @@ while good:
                 align_from_target()
             if event.key == pygame.K_g:
                 goto_target()
+            if event.key == pygame.K_u:
+                current_info = get_status()
     pygame.display.flip()
 
 pygame.quit()
