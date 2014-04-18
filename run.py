@@ -6,7 +6,7 @@ import curses
 from curses.textpad import Textbox, rectangle
 
 
-port = ''
+port = None
 dec = ''
 ra = ''
 current_info = [';']
@@ -14,14 +14,18 @@ current_info = [';']
 def open_port():
     port_name = '/dev/ttyUSB0'
     port_name = get_param("Set port to open [leave blank for '/dev/ttyUSB0']")
-    if port_name == '':
-        ser = serial.Serial('/dev/ttyUSB0', 19200, timeout = 0.1)
-    else:
-        ser = serial.Serial(port_name, 19200, timeout = 0.1)
-    return ser
+    try:
+         if port_name == '':
+              ser = serial.Serial('/dev/ttyUSB0', 19200, timeout = 0.1)
+         else:
+              ser = serial.Serial(port_name, 19200, timeout = 0.1)
+         return ser
+    except:
+         return None
 
 def check_align():
-    port.write('!AGas;')
+    if port is not None:
+         port.write('!AGas;')
 
 def set_target():
     dec = set_dec()
@@ -37,17 +41,21 @@ def set_ra():
     return ra
 
 def assign_target(d, r):
-    port.write('!CStd' + d + ';')
-    port.write('!CStr' + r + ';')
+    if port is not None:
+         port.write('!CStd' + d + ';')
+         port.write('!CStr' + r + ';')
 
 def alignment_side(direction):
-    port.write('!ASas' + direction + ';')
+    if port is not None:
+         port.write('!ASas' + direction + ';')
 
 def align_from_target():
-    port.write('!AFrn;')
+    if port is not None:
+         port.write('!AFrn;')
 
 def goto_target():
-    port.write('!GTrd;')
+    if port is not None:
+         port.write('!GTrd;')
 
 def help_box():
     h_box_place = (screen.get_width() - 250, 10, 
@@ -75,22 +83,26 @@ def current_info_box():
 			screen.addstr(i + 15, 35, new_c_i[i])
 
 def get_status():
-	port.readline()
-	port.write('!AGas;')
-	a = port.readline()
-	port.write('!AGai;')
-	b = port.readline()
-	port.write('!CGra;')
-	c = port.readline()
-	port.write('!CGde;')
-	d = port.readline()
-	port.write('!CGtr;')
-	e = port.readline()
-	port.write('!CGtd;')
-	f = port.readline()
-	
-	#return str(port.readline())
-	return [a, b, c, d, e, f]
+     if port is not None:
+          port.readline()
+          port.write('!AGas;')
+          a = port.readline()
+          port.write('!AGai;')
+          b = port.readline()
+          port.write('!CGra;')
+          c = port.readline()
+          port.write('!CGde;')
+          d = port.readline()
+          port.write('!CGtr;')
+          e = port.readline()
+          port.write('!CGtd;')
+          f = port.readline()
+          
+          #return str(port.readline())
+          return [a, b, c, d, e, f]
+     else:
+          nc = "Not connected."
+          return [nc,nc,nc,nc,nc,nc]
 
 def manage_string(string):
 	new_string = ''
@@ -133,7 +145,7 @@ while good:
 		screen.addstr(i + 15, 4, current_info_titles[i])
 	current_info_box()
 	current_time = time.time()
-	if port != '':
+	if port is not None:
 		if current_time - start_time > 2:
 			current_info = get_status()
 	screen.refresh()
