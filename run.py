@@ -17,7 +17,7 @@ def open_port():
     if port_name == '':
         ser = serial.Serial('/dev/ttyUSB0', 19200, timeout = 0.1)
     else:
-        ser = serial.Serial(port_name, 19200, timeout = 1)
+        ser = serial.Serial(port_name, 19200, timeout = 0.1)
     return ser
 
 def check_align():
