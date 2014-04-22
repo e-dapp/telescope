@@ -27,11 +27,6 @@ def open_port():
     except:
          return None
 
-def assign_target(d, r):
-    if port is not None:
-         port.write('!CStd' + d + ';')
-         port.write('!CStr' + r + ';')
-
 def alignment_side(direction):
     if port is not None:
          port.write('!ASas' + direction + ';')
@@ -109,7 +104,7 @@ def get_param(prompt):
 
 help_list = ['o - Open Port', 'e - Set Alignment Side', 
              'r - Target Right Ascension', 'd - Target Declination', 
-             's - Set Target From RA/DE', 'a - Align from Target', 
+             'a - Align from Target', 
              'g - GoTo Target', 'u - Update Current Info',
 	     '------------','q - Exit']
 
@@ -143,10 +138,12 @@ while good:
             port = open_port()
         if key == ord('d'):
             dec = get_param("Set target Declination [+dd:mm:ss]")
+	    if port is not None:
+		 port.write('!CStd' + d + ';')
         if key == ord('r'):
             ra = get_param("Set target Right Ascension [hh:mm:dd]")
-        if key == ord('s'):
-            assign_target(dec, ra)
+	    if port is not None:
+                 port.write('!CStr' + r + ';')
         if key == ord('e'):
             direction = get_param("Set alignment side [West/East]")
             alignment_side(direction)
