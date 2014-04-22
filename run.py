@@ -27,14 +27,6 @@ def open_port():
     except:
          return None
 
-def set_dec():
-    dec = str(raw_input('Set target Declination [form: +00:00:00]: '))
-    return dec
-
-def set_ra():
-    ra = str(raw_input('Set target Right Ascension [form: 00:00:00]: '))
-    return ra
-
 def assign_target(d, r):
     if port is not None:
          port.write('!CStd' + d + ';')
