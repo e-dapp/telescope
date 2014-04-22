@@ -8,10 +8,7 @@ from curses.textpad import Textbox, rectangle
 
 
 port = None
-dec = ''
-ra = ''
 current_info = [';']
-print os.uname()[0]
 
 def open_port():
     if os.uname()[0]=="Darwin":
@@ -106,34 +103,47 @@ while good:
 			current_info = get_status()
 	screen.refresh()
 	key = screen.getch()
+
+        ##########################	
+        # Main comamnds
+	
+        # Exit
         if key == 27 or key == ord('q'): #27=ESC
             good = False
+
+        # Open port
         if key == ord('o'):
             port = open_port()
 
+        # Set declination
         if key == ord('d'):
             dec = get_param("Set target Declination [+dd:mm:ss]")
 	    if port is not None:
-		 port.write('!CStd' + d + ';')
+		 port.write('!CStd' + dec + ';')
 
+        # Set right ascension
         if key == ord('r'):
             ra = get_param("Set target Right Ascension [hh:mm:dd]")
 	    if port is not None:
-                 port.write('!CStr' + r + ';')
+                 port.write('!CStr' + ra + ';')
 
+        # Set alignment
         if key == ord('e'):
             direction = get_param("Set alignment side [West/East]")
             if port is not None:
                  port.write('!ASas' + direction + ';')
 
+        # Align from target
         if key == ord('a'):
             if port is not None:
                  port.write('!AFrn;')
 
+        # Goto target
         if key == ord('g'):
             if port is not None:
                  port.write('!GTrd;')
 
+        # Exit
         if key == ord('u'):
             current_info = get_status()
 
