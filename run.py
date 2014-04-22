@@ -118,7 +118,7 @@ def get_param(prompt):
 	win = curses.newwin(5, 60, 5, 5)
 	win.border(0)
 	win.addstr(1,2,prompt)
-	return win.getstr(3,2,55).decode(encoding="utf-8")
+	return win.getstr(3,2,55)
 
 help_list = ['o - Open Port', 'e - Set Alignment Side', 
              'r - Target Right Ascension', 'd - Target Declination', 
