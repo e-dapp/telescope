@@ -27,32 +27,6 @@ def open_port():
     except:
          return None
 
-def alignment_side(direction):
-    if port is not None:
-         port.write('!ASas' + direction + ';')
-
-def align_from_target():
-    if port is not None:
-         port.write('!AFrn;')
-
-def goto_target():
-    if port is not None:
-         port.write('!GTrd;')
-
-def help_box():
-    h_box_place = (screen.get_width() - 250, 10, 
-                      240, 15 + len(help_list)*20)
-    
-    fontobject = pygame.font.SysFont("monospace", 14)
-    pygame.draw.rect(screen, white,
-                     h_box_place,
-                     1)
-    
-    for i in range(len(help_list)):
-        screen.blit(fontobject.render(help_list[i], 1, (255,255,255)),
-                        (h_box_place[0] + 10,
-                         h_box_place[1] + 5 + i*20))
-
 def current_info_box():
 	if current_info == [';']:
 		pass
@@ -136,21 +110,30 @@ while good:
             good = False
         if key == ord('o'):
             port = open_port()
+
         if key == ord('d'):
             dec = get_param("Set target Declination [+dd:mm:ss]")
 	    if port is not None:
 		 port.write('!CStd' + d + ';')
+
         if key == ord('r'):
             ra = get_param("Set target Right Ascension [hh:mm:dd]")
 	    if port is not None:
                  port.write('!CStr' + r + ';')
+
         if key == ord('e'):
             direction = get_param("Set alignment side [West/East]")
-            alignment_side(direction)
+            if port is not None:
+                 port.write('!ASas' + direction + ';')
+
         if key == ord('a'):
-            align_from_target()
+            if port is not None:
+                 port.write('!AFrn;')
+
         if key == ord('g'):
-            goto_target()
+            if port is not None:
+                 port.write('!GTrd;')
+
         if key == ord('u'):
             current_info = get_status()
 
