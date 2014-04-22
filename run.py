@@ -150,13 +150,13 @@ while good:
         if key == ord('o'):
             port = open_port()
         if key == ord('d'):
-            dec = get_param("Set target Declination [signed 6 digit]")
+            dec = get_param("Set target Declination [+dd:mm:ss]")
         if key == ord('r'):
-            ra = get_param("Set target Right Ascension [unsigned 6 digit]")
+            ra = get_param("Set target Right Ascension [hh:mm:dd]")
         if key == ord('s'):
             assign_target(dec, ra)
         if key == ord('e'):
-            direction = get_param("Set alignment side")
+            direction = get_param("Set alignment side [West/East]")
             alignment_side(direction)
         if key == ord('a'):
             align_from_target()
