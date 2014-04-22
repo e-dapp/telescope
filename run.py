@@ -27,15 +27,6 @@ def open_port():
     except:
          return None
 
-def check_align():
-    if port is not None:
-         port.write('!AGas;')
-
-def set_target():
-    dec = set_dec()
-    ra = set_ra()
-    assign_target(dec, ra)
-
 def set_dec():
     dec = str(raw_input('Set target Declination [form: +00:00:00]: '))
     return dec
