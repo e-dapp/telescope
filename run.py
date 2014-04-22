@@ -1,6 +1,7 @@
 #!/usr'bin/python
 import serial
 import sys
+import os
 import time
 import curses
 from curses.textpad import Textbox, rectangle
@@ -10,15 +11,18 @@ port = None
 dec = ''
 ra = ''
 current_info = [';']
+print os.uname()[0]
 
 def open_port():
-    port_name = '/dev/ttyUSB0'
-    port_name = get_param("Set port to open [leave blank for '/dev/ttyUSB0']")
+    if os.uname()[0]=="Darwin":
+         default_port_name = '/dev/tty.usbserial'
+    else:
+         default_port_name = '/dev/ttyUSB0'
+    port_name = get_param("Set port to open [leave blank for '"+default_port_name+"']")
     try:
          if port_name == '':
-              ser = serial.Serial('/dev/ttyUSB0', 19200, timeout = 0.1)
-         else:
-              ser = serial.Serial(port_name, 19200, timeout = 0.1)
+              port_name = default_port_name
+         ser = serial.Serial(port_name, 19200, timeout = 0.1)
          return ser
     except:
          return None
