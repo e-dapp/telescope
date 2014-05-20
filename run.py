@@ -1,75 +1,28 @@
 #!/usr'bin/python
 import serial
 import sys
+import os
 import time
 import curses
 from curses.textpad import Textbox, rectangle
 
 
 port = None
-dec = ''
-ra = ''
 current_info = [';']
 
 def open_port():
-    port_name = '/dev/ttyUSB0'
-    port_name = get_param("Set port to open [leave blank for '/dev/ttyUSB0']")
+    if os.uname()[0]=="Darwin":
+         default_port_name = '/dev/tty.usbserial'
+    else:
+         default_port_name = '/dev/ttyUSB0'
+    port_name = get_param("Set port to open [leave blank for '"+default_port_name+"']")
     try:
          if port_name == '':
-              ser = serial.Serial('/dev/ttyUSB0', 19200, timeout = 0.1)
-         else:
-              ser = serial.Serial(port_name, 19200, timeout = 0.1)
+              port_name = default_port_name
+         ser = serial.Serial(port_name, 19200, timeout = 0.1)
          return ser
     except:
          return None
-
-def check_align():
-    if port is not None:
-         port.write('!AGas;')
-
-def set_target():
-    dec = set_dec()
-    ra = set_ra()
-    assign_target(dec, ra)
-
-def set_dec():
-    dec = str(raw_input('Set target Declination [form: +00:00:00]: '))
-    return dec
-
-def set_ra():
-    ra = str(raw_input('Set target Right Ascension [form: 00:00:00]: '))
-    return ra
-
-def assign_target(d, r):
-    if port is not None:
-         port.write('!CStd' + d + ';')
-         port.write('!CStr' + r + ';')
-
-def alignment_side(direction):
-    if port is not None:
-         port.write('!ASas' + direction + ';')
-
-def align_from_target():
-    if port is not None:
-         port.write('!AFrn;')
-
-def goto_target():
-    if port is not None:
-         port.write('!GTrd;')
-
-def help_box():
-    h_box_place = (screen.get_width() - 250, 10, 
-                      240, 15 + len(help_list)*20)
-    
-    fontobject = pygame.font.SysFont("monospace", 14)
-    pygame.draw.rect(screen, white,
-                     h_box_place,
-                     1)
-    
-    for i in range(len(help_list)):
-        screen.blit(fontobject.render(help_list[i], 1, (255,255,255)),
-                        (h_box_place[0] + 10,
-                         h_box_place[1] + 5 + i*20))
 
 def current_info_box():
 	if current_info == [';']:
@@ -118,11 +71,11 @@ def get_param(prompt):
 	win = curses.newwin(5, 60, 5, 5)
 	win.border(0)
 	win.addstr(1,2,prompt)
-	return win.getstr(3,2,55).decode(encoding="utf-8")
+	return win.getstr(3,2,55)
 
 help_list = ['o - Open Port', 'e - Set Alignment Side', 
              'r - Target Right Ascension', 'd - Target Declination', 
-             's - Set Target From RA/DE', 'a - Align from Target', 
+             'a - Align from Target', 
              'g - GoTo Target', 'u - Update Current Info',
 	     '------------','q - Exit']
 
@@ -150,23 +103,47 @@ while good:
 			current_info = get_status()
 	screen.refresh()
 	key = screen.getch()
+
+        ##########################	
+        # Main comamnds
+	
+        # Exit
         if key == 27 or key == ord('q'): #27=ESC
             good = False
+
+        # Open port
         if key == ord('o'):
             port = open_port()
+
+        # Set declination
         if key == ord('d'):
-            dec = get_param("Set target Declination [signed 6 digit]")
+            dec = get_param("Set target Declination [+dd:mm:ss]")
+	    if port is not None:
+		 port.write('!CStd' + dec + ';')
+
+        # Set right ascension
         if key == ord('r'):
-            ra = get_param("Set target Right Ascension [unsigned 6 digit]")
-        if key == ord('s'):
-            assign_target(dec, ra)
+            ra = get_param("Set target Right Ascension [hh:mm:dd]")
+	    if port is not None:
+                 port.write('!CStr' + ra + ';')
+
+        # Set alignment
         if key == ord('e'):
-            direction = get_param("Set alignment side")
-            alignment_side(direction)
+            direction = get_param("Set alignment side [West/East]")
+            if port is not None:
+                 port.write('!ASas' + direction + ';')
+
+        # Align from target
         if key == ord('a'):
-            align_from_target()
+            if port is not None:
+                 port.write('!AFrn;')
+
+        # Goto target
         if key == ord('g'):
-            goto_target()
+            if port is not None:
+                 port.write('!GTrd;')
+
+        # Exit
         if key == ord('u'):
             current_info = get_status()
 
